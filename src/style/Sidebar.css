@@ -1,0 +1,25 @@
+.sidebar {
+  width: 150px;
+  background-color: #F5F5F5;
+  color: black;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding-top: 2rem;
+  position: fixed;
+}
+
+.icon {
+  font-size: 2rem;
+  margin: 1rem 0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  color: black;
+}
+
+.icon:hover {
+  transform: scale(1.2);
+  color: black;
+}
