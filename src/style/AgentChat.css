@@ -118,7 +118,7 @@ html, body {
 .chat-history::-webkit-scrollbar { width: 10px; }
 .chat-history::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 999px; }
 
-/* Overlay mini-login */
+/*  mini-login */
 .login-overlay{
   position: fixed; inset: 0;
   background: rgba(0,0,0,.25);

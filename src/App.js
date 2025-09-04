@@ -4,6 +4,7 @@ import Sidebar from './components/Sidebar';
 import AgentChat from './components/AgentChat';
 import TutorChat from './components/TutorChat';
 import Footer from './components/Footer';
+import Dashboard from './components/Dashboard';
 import Welcome from './components/Welcome';
 
 export default function App() {
@@ -27,6 +28,7 @@ export default function App() {
           {selected === "" && <Welcome />}
           {selected === "transcribe" && <AgentChat />}
           {selected === "educativo" && <TutorChat />}
+          {selected === "dashboard" && <Dashboard />}
         </div>
       </div>
 

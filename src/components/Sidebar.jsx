@@ -13,7 +13,7 @@ export default function Sidebar({ onSelect }) {
       <div className="icon" onClick={() => onSelect("transcribe")} title="Audio ↔ Texto">
         <i className="bi bi-heart"></i>
       </div>
-      <div className="icon" onClick={() => onSelect("riesgo")} title="">
+      <div className="icon" onClick={() => onSelect("dashboard")} title="Dashboard">
         <i className="bi bi-info-circle"></i>
       </div>
       <div className="icon" onClick={() => onSelect("riesgo")} title="">

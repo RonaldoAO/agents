@@ -21,7 +21,6 @@ export default function TutorChat() {
   const [loginId, setLoginId] = useState("");               // input del login
   const [loginErr, setLoginErr] = useState("");
 
-  // Refs
   const chatHistoryRef = useRef();
   const fileInputRef = useRef();
 
@@ -253,7 +252,6 @@ export default function TutorChat() {
         </div>
       )}
 
-      {/* Barra de chat (deshabilitada si no hay matrícula o está el login abierto) */}
       <div className="chat-bar" aria-disabled={showLogin || !userId}>
         <button
           className="icon-btn"
@@ -297,7 +295,7 @@ export default function TutorChat() {
         </button>
       </div>
 
-      {/* Overlay mini-login */}
+      {/* mini-login */}
       {showLogin && (
         <div
           className="login-overlay"

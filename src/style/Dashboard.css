@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap');
+
+:root {
+  --radius-xl: 1rem;
+  --color-bg: #f5f5f5;
+  --color-card: #ffffff;
+  --color-border: #e0e0e0;
+  --color-text: #222;
+  --color-subtext: #555;
+  --shadow: 0 2px 6px rgba(0,0,0,.08);
+}
+
+* {
+  font-family: 'Poppins', sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  line-height: 1.5;
+}
+
+.risk-container {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background: var(--color-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow);
+}
+
+.risk-title {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--color-text);
+}
+
+.risk-container h3 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin: 1.5rem 0 0.75rem;
+  color: var(--color-subtext);
+}
+
+.risk-summary {
+  background: #fafafa;
+  border: 1px solid var(--color-border);
+  border-radius: 0.75rem;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+}
+
+.risk-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+}
+
+.risk-table th {
+  text-align: left;
+  background: #f9f9f9;
+  border-bottom: 2px solid var(--color-border);
+  padding: 0.6rem;
+  font-weight: 500;
+}
+
+.risk-table td {
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem 0.6rem;
+}
+
+.risk-table tbody tr:hover {
+  background: #fdfdfd;
+}
+
+
+
+.error {
+  color: #b00020;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 1rem;
+}
+
+.risk-meta {
+  font-size: 0.8rem;
+  color: var(--color-subtext);
+  text-align: right;
+  margin-top: 1rem;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.badge.red { background: #d32f2f; }
+.badge.orange { background: #f57c00; }
+.badge.green { background: #388e3c; }
+
+
+.loading {
+  color: var(--color-subtext);
+  font-size: 0.95rem;
+  padding: 1rem;
+  text-align: center;
+}
+
