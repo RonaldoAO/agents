@@ -1,14 +1,28 @@
+body { margin: 0; }
+
 .sidebar {
   width: 150px;
   background-color: #F5F5F5;
   color: black;
-  height: 500px;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;          
+  height: 100vh;      
+  height: 100dvh;     
+
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
   padding-top: 2rem;
-  position: fixed;
+  overflow-y: auto;   
+}
+
+.main {
+  margin-left: 150px;
+  padding: 2rem;
 }
 
 .icon {
@@ -18,7 +32,6 @@
   transition: transform 0.2s ease;
   color: black;
 }
-
 .icon:hover {
   transform: scale(1.2);
   color: black;
