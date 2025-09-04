@@ -62,11 +62,20 @@ html, body {
 .msg.bot  { background: #F5F5F5; color: #000; align-self: flex-start; }
 
 .archivo-seleccionado, .subiendo {
-  background: #0859700c; color: #000;
-  padding: 0.25rem 0.5rem; border-radius: 0.5rem;
-  display: inline-flex; align-items: center; gap: .5rem;
-  font-size: 0.85rem; margin: .25rem 0;
+  position: sticky;
+  bottom: calc(var(--footer-h) + var(--bar-gap) + 60px); 
+  background: #0859700c;
+  color: #000;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.5rem;
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-size: 0.85rem;
+  margin: .25rem 0;
 }
+
+
 .cancel-btn { background: transparent; border: none; color: #000; cursor: pointer; }
 
 .chat-bar {

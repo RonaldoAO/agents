@@ -285,20 +285,7 @@ export default function AgentChat() {
 
       {file && (
         <div className="archivo-seleccionado">
-          📁 Archivo seleccionado: <strong>{file.name}</strong>
-          {/* preview del audio */}
-          {previewUrl && (
-            <span
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                marginLeft: 8,
-              }}
-            >
-              <audio controls src={previewUrl} style={{ height: 32 }} />
-            </span>
-          )}
+          📁 Archivo seleccionado: <strong>{file.name}</strong>          
           <button
             className="cancel-btn"
             onClick={() => {
