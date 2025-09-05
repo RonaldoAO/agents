@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Bar, Pie, Line } from "react-chartjs-2";
+import { Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   Title,
@@ -9,8 +9,6 @@ import {
   BarElement,
   CategoryScale,
   LinearScale,
-  PointElement,
-  LineElement,
 } from "chart.js";
 
 import "../style/Dashboard.css";
@@ -23,9 +21,7 @@ ChartJS.register(
   ArcElement,
   BarElement,
   CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement
+  LinearScale
 );
 
 const API_BASE = "https://8oc6ik9r54.execute-api.us-east-1.amazonaws.com/Prod";
@@ -58,43 +54,32 @@ export default function StudentRiskUniversidad() {
   if (error) return <p className="error">❌ {error}</p>;
   if (!data) return null;
 
-  const { summary = {}, trends = [], metadata = {} } = data;
+  const {
+    summary = {},
+    metadata = {},
+    risk_alerts = {},
+    risk_breakdown = {},
+    students_at_risk = [],
+  } = data;
 
-  const semesterDist = summary.semester_distribution || {};
   const programDist = summary.program_distribution || {};
   const perfDist = summary.performance_distribution || {};
 
-  // paleta de colores
+  // paleta de colores y mapa de riesgo
   const palette = [
-    "#4dc9f6",
-    "#f67019",
-    "#f53794",
-    "#537bc4",
-    "#acc236",
-    "#166a8f",
-    "#00a950",
-    "#58595b",
-    "#8549ba",
-    "#ff9f40",
-    "#36a2eb",
-    "#ff6384",
+    "#ef4444", 
+    "#f59e0b", 
+    "#10b981", 
+    "#3b82f6",
+    "#a855f7",
+    "#06b6d4",
+    "#f97316",
+    "#84cc16",
+    "#eab308",
+    "#22c55e",
   ];
-
   const makeColors = (n) => Array.from({ length: n }, (_, i) => palette[i % palette.length]);
-
-  // 
-  const semesterBar = {
-    labels: Object.keys(semesterDist),
-    datasets: [
-      {
-        label: "Estudiantes",
-        data: Object.values(semesterDist),
-        backgroundColor: "rgba(54, 162, 235, 0.6)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
+  const RISK_COLORS = { Alto: "#ef4444", Medio: "#f59e0b", Bajo: "#10b981" };
 
   const programPie = {
     labels: Object.keys(programDist),
@@ -106,43 +91,65 @@ export default function StudentRiskUniversidad() {
     ],
   };
 
-
-  const trendsLineGradesAttendance = {
-    labels: trends.map((t) => `Semana ${t.week}`),
+  const riskDonut = {
+    labels: ["Alto riesgo", "Riesgo medio", "Bajo riesgo"],
     datasets: [
       {
-        label: "Nota Promedio",
-        data: trends.map((t) => t.avg_grade),
-        borderWidth: 2,
-        tension: 0.25,
-        fill: false,
-        borderColor: "#2563eb", 
-        pointBackgroundColor: "#2563eb",
-      },
-      {
-        label: "Asistencia (%)",
-        data: trends.map((t) => Math.round((t.avg_attendance || 0) * 100)),
-        borderWidth: 2,
-        tension: 0.25,
-        fill: false,
-        borderColor: "#10b981", 
-        pointBackgroundColor: "#10b981",
-      },
-    ],
-  };
-
-  const trendsBarAssignments = {
-    labels: trends.map((t) => `Semana ${t.week}`),
-    datasets: [
-      {
-        label: "Tareas promedio",
-        data: trends.map((t) => t.avg_assignments),
-        backgroundColor: "rgba(249, 115, 22, 0.6)", 
-        borderColor: "rgba(249, 115, 22, 1)",
+        data: [perfDist.Alto || 0, perfDist.Medio || 0, perfDist.Bajo || 0],
+        backgroundColor: [
+          RISK_COLORS.Alto,
+          RISK_COLORS.Medio + "99",
+          RISK_COLORS.Bajo + "66",
+        ],
+        borderColor: [RISK_COLORS.Alto, RISK_COLORS.Medio, RISK_COLORS.Bajo],
         borderWidth: 1,
       },
     ],
   };
+
+  const stackedByProgram = (() => {
+    const labels = Object.keys(risk_breakdown.by_program || {});
+    const alto = labels.map((p) => risk_breakdown.by_program[p]?.Alto || 0);
+    const medio = labels.map((p) => risk_breakdown.by_program[p]?.Medio || 0);
+    const bajo = labels.map((p) => risk_breakdown.by_program[p]?.Bajo || 0);
+    return {
+      labels,
+      datasets: [
+        { label: "Alto riesgo", data: alto, backgroundColor: RISK_COLORS.Alto },
+        { label: "Riesgo medio", data: medio, backgroundColor: RISK_COLORS.Medio },
+        { label: "Bajo riesgo", data: bajo, backgroundColor: RISK_COLORS.Bajo },
+      ],
+    };
+  })();
+
+  const highRiskBar = {
+    labels: Object.keys(risk_alerts.high_risk_by_program || {}),
+    datasets: [
+      {
+        label: "Estudiantes en ALTO riesgo",
+        data: Object.values(risk_alerts.high_risk_by_program || {}),
+        backgroundColor: RISK_COLORS.Alto + "cc",
+        borderColor: RISK_COLORS.Alto,
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const riskScoresBar = (() => {
+    const sorted = [...students_at_risk].sort((a, b) => Number(b.risk_score) - Number(a.risk_score));
+    return {
+      labels: sorted.map((s) => s.name.split(" ")[0] + ` (${s.program.slice(0,3)})`),
+      datasets: [
+        {
+          label: "Risk Score",
+          data: sorted.map((s) => Number(s.risk_score)),
+          backgroundColor: RISK_COLORS.Alto + "cc",
+          borderColor: RISK_COLORS.Alto,
+          borderWidth: 1,
+        },
+      ],
+    };
+  })();
 
   const commonOptions = {
     responsive: true,
@@ -153,106 +160,84 @@ export default function StudentRiskUniversidad() {
       tooltip: { mode: "index", intersect: false },
     },
     interaction: { mode: "index", intersect: false },
-    scales: {
-      x: { grid: { display: false } },
-      y: { beginAtZero: true }
-    }
-  };
-
-  const options0to100 = {
-    ...commonOptions,
-    scales: {
-      ...commonOptions.scales,
-      y: { beginAtZero: true, max: 100 }
-    }
-  };
-
-  const optionsAssignments = {
-    ...commonOptions,
-    scales: {
-      ...commonOptions.scales,
-      y: { beginAtZero: true, suggestedMax: 5 }
-    }
+    scales: { x: { grid: { display: false } }, y: { beginAtZero: true } },
   };
 
   return (
     <div className="risk-container">
       <h2 className="risk-title">📊 Dashboard Universidad</h2>
 
-      {/* riesgos */}
+      {/* KPIs por nivel de riesgo */}
+      <div className="kpi-row">
+        <div className="kpi bad">
+          <span className="kpi-title">Alto riesgo</span>
+          <strong>{perfDist.Alto ?? 0}</strong>
+        </div>
+        <div className="kpi warn">
+          <span className="kpi-title">Riesgo medio</span>
+          <strong>{perfDist.Medio ?? 0}</strong>
+        </div>
+        <div className="kpi good">
+          <span className="kpi-title">Bajo riesgo</span>
+          <strong>{perfDist.Bajo ?? 0}</strong>
+        </div>
+      </div>
+
+      {/* resumen general */}
       <div className="risk-summary">
         <p>
           Total estudiantes: <strong>{summary.total_students ?? "-"}</strong>
         </p>
-        <p>
-          🔴 Alto: {perfDist.Alto ?? 0} | 🟠 Medio: {perfDist.Medio ?? 0} | 🟢 Bajo: {perfDist.Bajo ?? 0}
-        </p>
+        {risk_alerts?.alert_message ? (
+          <p className="muted">⚠️ {risk_alerts.alert_message}</p>
+        ) : null}
       </div>
 
-      {/* distribución x semestre */}
-      <section className="chart-card">
-        <h3>📚 Distribución por semestre</h3>
-        <div className="chart-wrap">
-          {Object.keys(semesterDist).length ? (
-            <Bar data={semesterBar} options={commonOptions} />
-          ) : (
-            <p>Sin datos de semestres.</p>
-          )}
-        </div>
-      </section>
-
-      {/* distribución x carrera */}
+      {/* distribución por programa */}
       <section className="chart-card">
         <h3>🎓 Distribución por programa</h3>
         <div className="chart-wrap">
           {Object.keys(programDist).length ? (
-            <Pie
-              data={programPie}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: { position: "right" },
-                  tooltip: { callbacks: { label: (ctx) => `${ctx.label}: ${ctx.parsed}` } },
-                },
-              }}
-            />
+            <Pie data={programPie} options={{ responsive: true, maintainAspectRatio: false, plugins: { legend: { position: "right" } } }} />
           ) : (
             <p>Sin datos de programas.</p>
           )}
         </div>
       </section>
 
-      {/* notas y asistencias */}
+
+      {/* Alto riesgo por programa */}
       <section className="chart-card">
-        <h3>📈 Tendencias: Nota y Asistencia (Semanas 9–12)</h3>
+        <h3>🚨 ALTO riesgo por programa</h3>
         <div className="chart-wrap">
-          {trends?.length ? (
-            <Line data={trendsLineGradesAttendance} options={options0to100} />
-          ) : (
-            <p>Sin datos de tendencias.</p>
-          )}
+          <Bar data={highRiskBar} options={commonOptions} />
         </div>
+        <small className="muted">{risk_alerts.alert_message || ""}</small>
       </section>
 
-      {/* tareas */}
+      {/* desglose de riesgo por programa */}
       <section className="chart-card">
-        <h3>🧩 Tendencias: Tareas (Semanas 9–12)</h3>
+        <h3>🧱 Desglose de riesgo por programa</h3>
         <div className="chart-wrap">
-          {trends?.length ? (
-            <Bar data={trendsBarAssignments} options={optionsAssignments} />
-          ) : (
-            <p>Sin datos de tendencias.</p>
-          )}
+          <Bar data={stackedByProgram} options={{ ...commonOptions, scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } } }} />
         </div>
+        <small className="muted">Apilado por nivel (Alto/Medio/Bajo).</small>
       </section>
 
-      {/* data extra */}
+      {/* Estudiantes en ALTO riesgo */}
+      <section className="chart-card">
+        <h3>🏷️ Estudiantes en ALTO riesgo (score)</h3>
+        <div className="chart-wrap">
+          <Bar data={riskScoresBar} options={{ ...commonOptions, scales: { x: { grid: { display: false } }, y: { beginAtZero: true, suggestedMax: 100 } } }} />
+        </div>
+        <small className="muted">Ordenados por <em>risk score</em>.</small>
+      </section>
+
+      {/* data estra */}
       <div className="risk-meta">
         <p>Última actualización: {metadata.last_updated ? new Date(metadata.last_updated).toLocaleString() : "-"}</p>
         <p>Período: {metadata.analysis_period ?? "-"}</p>
       </div>
-
 
     </div>
   );

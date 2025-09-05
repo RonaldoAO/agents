@@ -8,10 +8,13 @@
   --color-text: #222;
   --color-subtext: #555;
   --shadow: 0 2px 6px rgba(0, 0, 0, .08);
+
+  --risk-high: #ef4444;   
+  --risk-mid:  #f59e0b;   
+  --risk-low:  #10b981;   
 }
 
 * {
-  font-family: 'Poppins', sans-serif;
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -21,6 +24,7 @@ body {
   background: var(--color-bg);
   color: var(--color-text);
   line-height: 1.5;
+  font-family: 'Poppins', sans-serif;
 }
 
 .risk-container {
@@ -55,39 +59,18 @@ body {
   font-size: 0.95rem;
 }
 
-.risk-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1.5rem;
-  font-size: 0.9rem;
-}
-
-.risk-table th {
-  text-align: left;
-  background: #f9f9f9;
-  border-bottom: 2px solid var(--color-border);
-  padding: 0.6rem;
-  font-weight: 500;
-}
-
-.risk-table td {
-  border-bottom: 1px solid #eee;
-  padding: 0.5rem 0.6rem;
-}
-
-.risk-table tbody tr:hover {
-  background: #fdfdfd;
-}
-
-
-
 .error {
   color: #b00020;
   font-size: 0.9rem;
   font-weight: 500;
   padding: 1rem;
 }
-
+.loading {
+  color: var(--color-subtext);
+  font-size: 0.95rem;
+  padding: 1rem;
+  text-align: center;
+}
 .risk-meta {
   font-size: 0.8rem;
   color: var(--color-subtext);
@@ -104,26 +87,9 @@ body {
   font-weight: 500;
   color: #fff;
 }
-
-.badge.red {
-  background: #d32f2f;
-}
-
-.badge.orange {
-  background: #f57c00;
-}
-
-.badge.green {
-  background: #388e3c;
-}
-
-
-.loading {
-  color: var(--color-subtext);
-  font-size: 0.95rem;
-  padding: 1rem;
-  text-align: center;
-}
+.badge.red    { background: #d32f2f; }
+.badge.orange { background: #f57c00; }
+.badge.green  { background: #388e3c; }
 
 .chart-card {
   background: #fff;
@@ -132,13 +98,37 @@ body {
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
   margin: 16px 0;
 }
-
+.chart-card.emphasis {
+  border: 1px solid #fee2e2;
+  box-shadow: 0 8px 24px rgba(239, 68, 68, 0.08);
+}
 .chart-wrap {
   position: relative;
   width: 100%;
   height: 320px;
 }
+.muted { color: #6b7280; }
 
-.muted {
-  color: #6b7280;
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0,1fr));
+  gap: 12px;
+  margin: 12px 0 4px;
+}
+.kpi {
+  padding: 12px;
+  border-radius: 12px;
+  background: #f9fafb;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-start;
+}
+.kpi .kpi-title { font-size: 12px; color: #6b7280; }
+.kpi.bad  strong { color: var(--risk-high); }
+.kpi.warn strong { color: var(--risk-mid); }
+.kpi.good strong { color: var(--risk-low); }
+
+@media (max-width: 768px) {
+  .kpi-row { grid-template-columns: 1fr; }
 }
